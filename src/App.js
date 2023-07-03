@@ -1,11 +1,11 @@
-import "./App.css";
 import React, { useState, useEffect } from "react";
 import IssueList from "./pages/IssueList";
 import NewIssue from "./pages/NewIssue";
 import IssueView from "./pages/IssueView";
 import NavBar from "./components/NavBar";
-import { Route, Switch, BrowserRouter as Router } from "react-router-dom";
+import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
 import { supabase } from "./components/supabaseClient";
+import UpdateIssue from "./pages/UpdateIssue";
 
 function App() {
   const [issues, setIssues] = useState([]);
@@ -16,6 +16,8 @@ function App() {
   }
 
   useEffect(() => {
+    document.body.style = "background: rgb(50, 60, 70)";
+    document.title = "SIT";
     getIssues();
   }, []);
 
@@ -23,21 +25,22 @@ function App() {
     <Router>
       <div>
         <NavBar />
-        <Switch>
-          <Route path='/NewIssue'>
-            <NewIssue />
-          </Route>
-
+        <Routes>
+          <Route path='/NewIssue' element={<NewIssue />} />
           {issues.map((issue) => (
-            <Route path={"/Issue/" + issue.id}>
-              <IssueView object={issue} key={issue.id} />
-            </Route>
+            <Route
+              path={"/Issue/" + issue.id}
+              element={<IssueView object={issue} key={issue.id} />}
+            />
           ))}
-
-          <Route path='/'>
-            <IssueList />
-          </Route>
-        </Switch>
+          {issues.map((issue) => (
+            <Route
+              path={issue.id + "/UpdateIssue"}
+              element={<UpdateIssue object={issue} key={issue.id} />}
+            />
+          ))}
+          <Route path='/' element={<IssueList />} />
+        </Routes>
       </div>
     </Router>
   );
